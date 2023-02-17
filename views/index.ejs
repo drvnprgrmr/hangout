@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangout</title>
+</head>
+<body>
+    <% if (user) { %>
+        <h1>Welcome back <%= user.username %></h1>
+
+        <div>
+            <a href="room/create">Create room</a>
+            <a href="room/join">Join room</a>
+        </div>
+    <% } else { %>
+        <h1>Welcome to Hangout</h1>
+        <div>
+            <a href="auth/signin">Login to your account</a>
+            <a href="auth/signup">Create an account</a>
+        </div>
+    <% } %>
+            
+</body>
+</html>
