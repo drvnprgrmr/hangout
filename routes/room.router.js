@@ -1,40 +1,20 @@
 const express = require("express")
 const roomRouter = express.Router()
 
-const Room = require("../models/room")
+const {
+    getCreatePage,
+    createRoom,
+    getJoinPage,
+    getRoom
+} = require("../controllers/room.controller")
 
 
+roomRouter.get("/create", getCreatePage)
 
-roomRouter.get("/create", (req, res) => {
-    // Get the master of the room
-    const master = req.session.user
-    res.render("room/create", { master })
-})
+roomRouter.post("/create", createRoom)
 
-roomRouter.post("/create", async (req, res, next) => {
-    const { name, numPlayers, master } = req.body
-    
-    try {
-        const room = await Room.create({ name, numPlayers, master })
-        
-        // Save room data
-        res.locals.room = room
-        res.locals.master = req.session.user
-        
-        // Send the user to the newly created room
-        res.redirect(room.id)
+roomRouter.get("/join", getJoinPage)
 
-    } catch (err) {
-        next(err)
-    }
-    
-})
-
-roomRouter.get("/:id", async (req, res) => {
-    const roomID = req.params.id
-    const room = await Room.findById(roomID).populate("master").lean()
-
-    res.render("room/index", { room })
-})
+roomRouter.get("/:id", getRoom)
 
 module.exports = roomRouter
