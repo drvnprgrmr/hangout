@@ -1,6 +1,5 @@
 require("dotenv").config()
 
-const http = require("http")
 const express = require("express")
 const session = require("express-session")
 const MongoStore = require("connect-mongo")
@@ -9,7 +8,6 @@ const authRouter = require("./routes/auth.router")
 const roomsRouter = require("./routes/room.router")
 
 const app = express()
-const httpServer = http.createServer(app)
 
 app.set("view engine", "ejs")
 app.set("views", "views")
@@ -48,6 +46,6 @@ app.use((err, req, res, next) => {
 })
 
 
-module.exports = httpServer
+module.exports = app
 
 
