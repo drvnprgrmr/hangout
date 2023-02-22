@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>Join a room</h1>
-    <p>User: <span id="username"><%= player.username %></span> &lt;<span id="player-id"><%= player.id %></span>&gt;</p>
+    <p>User: <span id="username"><%= player.username %></span> &lt;<span id="player-id"><%= player._id %></span>&gt;</p>
     <ul id="room-list">
         <% rooms.forEach(room => { %>
             <li class="room" id="<%= room._id %>">

@@ -24,16 +24,20 @@ app.use(session({
     resave: false
 }))
 
+// Middleware to protect routes
+const loggedIn = (req, res, next) => {
+    if (req.session.user) return next()
+    res.redirect("/auth/login")
+}
 
 app.get("/", (req, res) => {
     const user = req.session.user 
-    
     res.render("index", { user })
 })
 
 // Routes
-app.use("/auth", authRouter)
-app.use("/room", roomsRouter)
+app.use("/auth", loggedIn, authRouter)
+app.use("/room", loggedIn, roomsRouter)
 
 // 404 Handler
 app.use((req, res) => {

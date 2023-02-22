@@ -31,7 +31,7 @@ function getSigninPage(req, res) {
 async function signinUser(req, res) {
     const { username, password } = req.body
 
-    const user = await User.findOne({ username })
+    const user = await User.findOne({ username }).exec()
 
     let error
     if (!user) {
@@ -47,16 +47,18 @@ async function signinUser(req, res) {
     }
 
     // Save user info to the session
-    req.session.user = {
-        id: user.id,
-        username: user.username
-    }
+    req.session.user = user
+    // Remove hashed password
+    delete req.session.user.password 
 
     res.redirect("/")
 
 
 }
 
+async function signoutUser(req, res) {
+    
+}
 
 module.exports = {
     getSignupPage,

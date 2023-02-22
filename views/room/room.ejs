@@ -7,15 +7,18 @@
     <title>Room: <%= room.name %></title>
 </head>
 <body>
-    <h1>Welcome to room <span id="room-name"><%= room.name %></span><span id="room-id"><%= room.id %></span></h1>
+    <h1>Welcome to room <span id="room-name"><%= room.name %></span></h1>
+    <p>Id: <span id="room-id"><%= room._id %></span></p>
+
+    <%# Only show delete button if player is master %>
+    <% if (player._id === room.master._id) { %>
+        <div><button id="delete">Delete</button></div>
+     
+    <% } %>
     <ul id="players">
-        <li id="master-name"><%= room.master.username %></li>
+        <li class="player" id="master"><%= room.master.username %></li>
     </ul>
 </body>
-
-<!-- Make context available to js file -->
-<div id="room" style="display: none;"><%= JSON.stringify(room) %></div>
-<div id="player" style="display: none;"><%= JSON.stringify(player) %></div>
 
 <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"
     integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" 

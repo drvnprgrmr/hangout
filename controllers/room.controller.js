@@ -1,5 +1,5 @@
 const Room = require("../models/room")
-
+const appSocket = require("../socket")
 
 function getCreatePage(req, res) {
     // Get the master of the room
@@ -12,7 +12,11 @@ async function createRoom(req, res, next) {
 
     try {
         const room = await Room.create({ name, numPlayers, master })
+        await room.populate("master", "-password")
         
+        // Tell the socket server of the new room
+        appSocket.emit("room:create", room)
+
         // Send the user to the newly created room
         res.redirect(room.id)
     } catch (err) {
@@ -32,8 +36,16 @@ async function getRoom(req, res) {
     const roomID = req.params.id
     const room = await Room.findById(roomID).populate("master", "-password").lean()
 
+    console.log(player._id, room.master._id, player._id === room.master._id)
     res.render("room/room", { player, room })
 }
+
+
+// Delete a room 
+appSocket.on("room:delete", async (id) => {
+    console.log(`room ${id} has been deleted`)
+    await Room.findByIdAndDelete(id).exec()
+})
 
 module.exports = {
     getCreatePage,

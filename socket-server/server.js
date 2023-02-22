@@ -16,19 +16,32 @@ io.on("connection", (socket) => {
     })
 })
 
+const appNamespace = io.of("/app")
 const joinNamespace = io.of("/join")
 const roomNamespace = io.of("/room")
 
-roomNamespace.on("connection", (socket) => {
-    console.log("room", socket.id)
+// Messages from the app server 
+appNamespace.on("connection", (socket) => {
+    console.log("app", socket.id)
+    
     // Tell all waiting users about the new room
     socket.on("room:create", (room) => {
         joinNamespace.emit("room:create", room)
+
         console.log(room)
     })
+})
 
-    socket.on("room:destroy", (id) => {
-        joinNamespace.emit("room:destroy", id)
+roomNamespace.on("connection", (socket) => {
+    console.log("room", socket.id)
+    
+
+    socket.on("room:delete", (id) => {
+        // Inform users waiting to join 
+        joinNamespace.emit("room:delete", id)
+
+        // Tell the server that a room has been deleted
+        appNamespace.emit("room:delete", id)
     })
 })
 

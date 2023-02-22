@@ -9,8 +9,6 @@ socket.user = {
     username, playerID
 }
 
-socket.emit("player:enter")
-
 // When new room is created
 socket.on("room:create", (room) => {
     console.log("New room: ", room)
@@ -25,4 +23,10 @@ socket.on("room:create", (room) => {
         </a>
     `
     roomList.appendChild(roomEl)
+})
+
+// Remove room when it is deleted
+socket.on("room:delete", (id) => {
+    const room = document.getElementById(id)
+    room.remove()
 })

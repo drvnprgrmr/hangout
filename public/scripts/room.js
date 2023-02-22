@@ -1,19 +1,19 @@
 const socket = io("http://localhost:5500/room")
 
-const player = JSON.parse(document.getElementById("player").textContent)
-const room = JSON.parse(document.getElementById("room").textContent)
+const roomID = document.getElementById("room-id")
+const deleteBtn = document.getElementById("delete")
 
-console.log(player, room)
-console.log(room.master._id, player.id);
-if (room.master._id === player.id) {
-    socket.emit("room:create", room)
-    console.log("create")
-} else {
-    socket.emit("room:join", player)
-}
-
-socket.on("disconnect", () => {
-    if (room.master._id === player.id) {
-        socket.emit("room:destroy", room._id)
+deleteBtn.addEventListener("click", () => {
+    const msg = `
+    Are you sure you want to delete this room?
+    All users will be automatically removed
+    `
+    const resp = confirm(msg)
+    if (resp) {
+        socket.emit("room:delete", roomID)
+        
+        // Redirect back to the home URL
+        location.href = "/"
     }
 })
+
