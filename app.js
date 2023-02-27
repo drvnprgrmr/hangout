@@ -21,13 +21,14 @@ app.use(session({
     }),
     secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
-    resave: false
+    resave: false,
+    secure: process.env.NODE_ENV === 'development' ? false : true
 }))
 
 // Middleware to protect routes
 const loggedIn = (req, res, next) => {
     if (req.session.user) return next()
-    res.redirect("/auth/login")
+    res.redirect("/auth/signin")
 }
 
 app.get("/", (req, res) => {
@@ -36,7 +37,7 @@ app.get("/", (req, res) => {
 })
 
 // Routes
-app.use("/auth", loggedIn, authRouter)
+app.use("/auth", authRouter)
 app.use("/room", loggedIn, roomsRouter)
 
 // 404 Handler

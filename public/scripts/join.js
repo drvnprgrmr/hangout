@@ -11,7 +11,7 @@ socket.user = {
 
 // When new room is created
 socket.on("room:create", (room) => {
-    console.log("New room: ", room)
+    // console.log("New room: ", room)
     const roomEl = document.createElement("li")
     roomEl.className = "room"
     roomEl.id = room._id

@@ -29,7 +29,7 @@ function getSigninPage(req, res) {
 
 
 async function signinUser(req, res) {
-    const { username, password } = req.body
+    const { username, password, remember } = req.body
 
     const user = await User.findOne({ username }).exec()
 
@@ -47,22 +47,46 @@ async function signinUser(req, res) {
     }
 
     // Save user info to the session
-    req.session.user = user
-    // Remove hashed password
-    delete req.session.user.password 
+    req.session.user = {
+        _id: user.id,
+        username: user.username
+    }
+
+    if (remember) {
+        // Set the cookie to expire in 30 days
+        req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000
+
+        // Save remember state to session
+        req.session.remember = true
+    } else {
+        // Set the cookie to expire in 1 day
+        req.session.cookie.maxAge = 24 * 60 * 60 * 1000
+    }
 
     res.redirect("/")
 
 
 }
 
-async function signoutUser(req, res) {
+async function signoutUser(req, res, next) {
+    const cookie = req.session.cookie
     
+    // Delete the session
+    req.session.destroy(err => {
+        if (err) return next(err)
+
+        // Clear the cookie
+        res.clearCookie("connect.sid", {...cookie})
+
+        // Redirect to the login page
+        res.redirect("/auth/signin")
+    })
 }
 
 module.exports = {
     getSignupPage,
     signupUser,
     getSigninPage,
-    signinUser
+    signinUser,
+    signoutUser
 }

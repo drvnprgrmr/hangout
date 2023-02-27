@@ -36,7 +36,6 @@ async function getRoom(req, res) {
     const roomID = req.params.id
     const room = await Room.findById(roomID).populate("master", "-password").lean()
 
-    console.log(player._id, room.master._id, player._id === room.master._id)
     res.render("room/room", { player, room })
 }
 

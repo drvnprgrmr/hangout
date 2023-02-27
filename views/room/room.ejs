@@ -11,9 +11,8 @@
     <p>Id: <span id="room-id"><%= room._id %></span></p>
 
     <%# Only show delete button if player is master %>
-    <% if (player._id === room.master._id) { %>
+    <% if (player._id === room.master._id.toString()) { %>
         <div><button id="delete">Delete</button></div>
-     
     <% } %>
     <ul id="players">
         <li class="player" id="master"><%= room.master.username %></li>
