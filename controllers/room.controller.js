@@ -34,16 +34,47 @@ async function getJoinPage(req, res) {
 async function getRoom(req, res) {
     const player = req.session.user
     const roomID = req.params.id
-    const room = await Room.findById(roomID).populate("master", "-password").lean()
+    const room = await Room.findById(roomID).populate("master", "-password")
 
+    // If room does not exist
+    if (!room) return res.send("Room does not exist")
+
+    
+    player.isMaster = player._id === room.master._id.toString()
+    
+    if (!player.isMaster) {
+        // Tell the socket server about the new player
+        appSocket.emit("player:join", player, roomID)
+
+        // Add player to the list
+        room.players.push(player._id)
+        
+        // Populate the room
+        await room.populate("players", "-password")
+
+        await room.save()
+    }
+    
+    console.log("room", room)
     res.render("room/room", { player, room })
 }
 
 
 // Delete a room 
 appSocket.on("room:delete", async (id) => {
-    console.log(`room ${id} has been deleted`)
     await Room.findByIdAndDelete(id).exec()
+})
+
+// Remove player when they leave room
+appSocket.on("player:leave", async (playerID, roomID) => {
+    console.log(`player ${playerID} left room ${roomID}`)
+    const room = await Room.findById(roomID) 
+
+    room.players = room.players.filter(p => !p.equals(playerID))
+    
+    await room.save()
+    console.log("room: ", room)
+
 })
 
 module.exports = {

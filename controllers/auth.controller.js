@@ -9,13 +9,11 @@ async function signupUser(req, res, next) {
     const { username, password } = req.body
 
     try {
-        const user = await User.create({ username, password })
-        // Save user info to the session
-        req.session.user = {
-            id: user.id,
-            username: user.username
-        }
-        res.redirect("/")
+        // Create a new user
+        await User.create({ username, password })
+
+        // Redirect to signin page
+        res.redirect("signin")
     } catch (err) {
         next(err)
     }

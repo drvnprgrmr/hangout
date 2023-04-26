@@ -11,11 +11,20 @@
     <p>Id: <span id="room-id"><%= room._id %></span></p>
 
     <%# Only show delete button if player is master %>
-    <% if (player._id === room.master._id.toString()) { %>
-        <div><button id="delete">Delete</button></div>
+    <% if (player.isMaster) { %>
+        <div>
+            <button id="start">Start Game</button>
+            <button id="delete">Delete</button>
+        </div>
     <% } %>
-    <ul id="players">
+    <ul id="player-list">
         <li class="player" id="master"><%= room.master.username %></li>
+        <% room.players.forEach(player => { %>
+
+            <li class="player" id="<%= player._id %>"><%= player.username %></li>
+
+        <% }) %>
+    
     </ul>
 </body>
 

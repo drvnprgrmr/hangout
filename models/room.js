@@ -9,8 +9,7 @@ const roomSchema = new Schema({
     },
     numPlayers: {
         type: Number,
-        min: 2,
-        max: 10
+        min: 3
     },
 
     players: [{
